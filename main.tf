@@ -2,7 +2,9 @@ locals {
   awslogs_group         = "${var.logs_cloudwatch_group == "" ? "/ecs/${var.environment}/${var.name}" : var.logs_cloudwatch_group}"
   target_container_name = "${var.target_container_name == "" ? "${var.name}-${var.environment}" : var.target_container_name}"
   cloudwatch_alarm_name = "${var.cloudwatch_alarm_name == "" ? "${var.name}-${var.environment}" : var.cloudwatch_alarm_name}"
-
+  merged_tags = merge(
+    var.tags,
+  var.cost_tags)
   # for each target group, allow ingress from the alb to ecs container port
   lb_ingress_container_ports = distinct(
     [
@@ -21,64 +23,6 @@ locals {
     )
   )
 
-  # base64 encoded version of the helloworld go app
-  base64_encode_helloworld = base64encode(file("${path.module}/examples/helloworld.go"))
-
-  # default container definition to be used with the helloworld go app included
-  # in this repo. It currently supports 2 HTTP listeners configured on
-  # environment variables PORT1 and PORT2 and simple JSON requests logs
-  default_container_definitions = jsonencode(
-    [
-
-      {
-        name  = local.target_container_name
-        image = var.container_image
-
-        cpu       = var.fargate_task_cpu
-        memory    = var.fargate_task_memory
-        essential = true
-
-        portMappings = [
-          {
-            containerPort = element(var.hello_world_container_ports, 0)
-            hostPort      = element(var.hello_world_container_ports, 0)
-            protocol      = "tcp"
-          },
-          {
-            containerPort = element(var.hello_world_container_ports, 1)
-            hostPort      = element(var.hello_world_container_ports, 1)
-            protocol      = "tcp"
-          }
-        ]
-
-        logConfiguration = {
-          logDriver = "awslogs"
-          options = {
-            "awslogs-group"         = local.awslogs_group
-            "awslogs-region"        = data.aws_region.current.name
-            "awslogs-stream-prefix" = "helloworld"
-          }
-        }
-        environment = [
-          {
-            "name" : "PORT1",
-            "value" : tostring(element(var.hello_world_container_ports, 0))
-          },
-          {
-            "name" : "PORT2",
-            "value" : tostring(element(var.hello_world_container_ports, 1))
-          }
-        ]
-        mountPoints = []
-        volumesFrom = []
-        entryPoint = [
-          "/bin/sh", "-c",
-          "echo '${local.base64_encode_helloworld}' | base64 -d > helloworld.go && go run helloworld.go"
-        ]
-
-      }
-    ]
-  )
 }
 
 
@@ -93,11 +37,7 @@ resource "aws_cloudwatch_log_group" "main" {
 
   kms_key_id = var.kms_key_id
 
-  tags = {
-    Name        = "${var.name}-${var.environment}"
-    Environment = var.environment
-    Automation  = "Terraform"
-  }
+  tags = local.merged_tags
 }
 
 resource "aws_cloudwatch_metric_alarm" "alarm_cpu" {
@@ -114,7 +54,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_cpu" {
   period              = "120"
   statistic           = "Average"
   threshold           = var.cloudwatch_alarm_cpu_threshold
-
+  tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
     "ServiceName" = aws_ecs_service.main[count.index].name
@@ -135,7 +75,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_mem" {
   period              = "120"
   statistic           = "Average"
   threshold           = var.cloudwatch_alarm_mem_threshold
-
+  tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
     "ServiceName" = aws_ecs_service.main[count.index].name
@@ -156,7 +96,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_cpu_no_lb" {
   period              = "120"
   statistic           = "Average"
   threshold           = var.cloudwatch_alarm_cpu_threshold
-
+  tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
     "ServiceName" = aws_ecs_service.main_no_lb[count.index].name
@@ -177,7 +117,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_mem_no_lb" {
   period              = "120"
   statistic           = "Average"
   threshold           = var.cloudwatch_alarm_mem_threshold
-
+  tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
     "ServiceName" = aws_ecs_service.main_no_lb[count.index].name
@@ -193,11 +133,7 @@ resource "aws_security_group" "ecs_sg" {
   description = "${var.name}-${var.environment} container security group"
   vpc_id      = var.ecs_vpc_id
 
-  tags = {
-    Name        = "ecs-${var.name}-${var.environment}"
-    Environment = var.environment
-    Automation  = "Terraform"
-  }
+  tags = local.merged_tags
 }
 
 resource "aws_security_group_rule" "app_ecs_allow_outbound" {
@@ -414,37 +350,41 @@ resource "aws_iam_role_policy" "task_execution_role_policy" {
 
 data "aws_region" "current" {
 }
-
-# Create a task definition with a golang image so the ecs service can be easily
-# tested. We expect deployments will manage the future container definitions.
-resource "aws_ecs_task_definition" "main" {
-  family        = "${var.name}-${var.environment}"
-  network_mode  = "awsvpc"
-  task_role_arn = aws_iam_role.task_role.arn
-
-  # Fargate requirements
+module "ecs_task_definition_main" {
+  source                   = "github.com/unifio/terraform-aws-ecs-task-definition"
   requires_compatibilities = compact([var.ecs_use_fargate ? "FARGATE" : ""])
   cpu                      = var.ecs_use_fargate ? var.fargate_task_cpu : ""
   memory                   = var.ecs_use_fargate ? var.fargate_task_memory : ""
   execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
-
-  container_definitions = var.container_definitions == "" ? local.default_container_definitions : var.container_definitions
-
-  lifecycle {
-    ignore_changes = [
-      requires_compatibilities,
-      cpu,
-      memory,
-      execution_role_arn,
-      container_definitions,
-    ]
+  task_role_arn            = aws_iam_role.task_role.arn
+  ipc_mode                 = var.ecs_use_fargate ? null : ""
+  pid_mode                 = var.ecs_use_fargate ? null : ""
+  cpu_container            = var.fargate_task_cpu
+  memory_container         = var.fargate_task_memory
+  mountPoints              = var.mountPoints
+  portMappings             = var.portMappings
+  placement_constraints    = var.placement_constraints
+  volumes                  = var.volumes
+  tags                     = local.merged_tags
+  cost_tags                = var.cost_tags
+  command                  = var.command
+  network_mode             = "awsvpc"
+  logConfiguration = {
+    logDriver = "awslogs"
+    options = {
+      awslogs-group         = local.awslogs_group,
+      awslogs-region        = data.aws_region.current.name,
+      awslogs-stream-prefix = "${var.name}-ecs"
+    }
   }
+  workingDirectory = "/"
+  dockerLabels     = var.cost_tags
 }
 
 # Create a data source to pull the latest active revision from
 data "aws_ecs_task_definition" "main" {
-  task_definition = aws_ecs_task_definition.main.family
-  depends_on      = [aws_ecs_task_definition.main] # ensures at least one task def exists
+  task_definition = module.aws_ecs_task_definition.family
+  depends_on      = [module.aws_ecs_task_definition] # ensures at least one task def exists
 }
 
 locals {
@@ -477,16 +417,14 @@ locals {
 }
 
 resource "aws_ecs_service" "main" {
-  count = var.associate_alb || var.associate_nlb ? 1 : 0
-
   name    = var.name
   cluster = var.ecs_cluster.arn
 
   launch_type = local.ecs_service_launch_type
-
+  tags        = local.merged_tags
   # Use latest active revision
-  task_definition = "${aws_ecs_task_definition.main.family}:${max(
-    aws_ecs_task_definition.main.revision,
+  task_definition = "${module.aws_ecs_task_definition.family}:${max(
+    module.aws_ecs_task_definition.revision,
     data.aws_ecs_task_definition.main.revision,
   )}"
 
@@ -524,57 +462,6 @@ resource "aws_ecs_service" "main" {
       target_group_arn = load_balancer.value.lb_target_group_arn
       container_port   = load_balancer.value.container_port
     }
-  }
-
-  lifecycle {
-    ignore_changes = [task_definition]
-  }
-}
-
-# NOTE: We have to duplicate this resource with a count instead of parameterizing
-# the load_balancer argument due to this Terraform bug:
-# https://github.com/hashicorp/terraform/issues/16856
-resource "aws_ecs_service" "main_no_lb" {
-  count = var.associate_alb || var.associate_nlb ? 0 : 1
-
-  name    = var.name
-  cluster = var.ecs_cluster.arn
-
-  launch_type = local.ecs_service_launch_type
-
-  # Use latest active revision
-  task_definition = "${aws_ecs_task_definition.main.family}:${max(
-    aws_ecs_task_definition.main.revision,
-    data.aws_ecs_task_definition.main.revision,
-  )}"
-
-  desired_count                      = var.tasks_desired_count
-  deployment_minimum_healthy_percent = var.tasks_minimum_healthy_percent
-  deployment_maximum_percent         = var.tasks_maximum_percent
-
-  dynamic ordered_placement_strategy {
-    for_each = local.ecs_service_ordered_placement_strategy[local.ecs_service_launch_type]
-    #    for_each = var.ecs_use_fargate ? [] : ["attribute:ecs.availability-zone", "instanceId"]
-
-    content {
-      type  = ordered_placement_strategy.value.type
-      field = ordered_placement_strategy.value.field
-    }
-  }
-
-  dynamic placement_constraints {
-    for_each = local.ecs_service_placement_constraints[local.ecs_service_launch_type]
-    #    for_each = var.ecs_use_fargate ? [] : ["distinctInstance"]
-
-    content {
-      type = placement_constraints.value.type
-    }
-  }
-
-  network_configuration {
-    subnets          = var.ecs_subnet_ids
-    security_groups  = local.ecs_service_agg_security_groups
-    assign_public_ip = var.assign_public_ip
   }
 
   lifecycle {

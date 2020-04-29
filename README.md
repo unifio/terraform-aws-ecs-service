@@ -103,7 +103,9 @@ module "app_ecs_service" {
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
 
-No requirements.
+| Name | Version |
+|------|---------|
+| terraform | >= 0.12 |
 
 ## Providers
 
@@ -127,7 +129,8 @@ No requirements.
 | cloudwatch\_alarm\_mem\_threshold | The Memory Utilization threshold for the CloudWatch metric alarm | `number` | `80` | no |
 | cloudwatch\_alarm\_name | Generic name used for CPU and Memory Cloudwatch Alarms | `string` | `""` | no |
 | container\_definitions | Container definitions provided as valid JSON document. Default uses golang:alpine running a simple hello world. | `string` | `""` | no |
-| container\_image | The image of the container. | `string` | `"golang:alpine"` | no |
+| container\_image | The image of the container. | `string` | n/a | yes |
+| cost\_tags | Additional tags for cost tracking | `map(string)` | `{}` | no |
 | ecr\_repo\_arns | The ARNs of the ECR repos.  By default, allows all repositories. | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
 | ecs\_cluster | ECS cluster object for this task. | <pre>object({<br>    arn  = string<br>    name = string<br>  })</pre> | n/a | yes |
 | ecs\_instance\_role | The name of the ECS instance role. | `string` | `""` | no |
@@ -137,17 +140,22 @@ No requirements.
 | environment | Environment tag, e.g prod. | `string` | n/a | yes |
 | fargate\_task\_cpu | Number of cpu units used in initial task definition. Default is minimum. | `number` | `256` | no |
 | fargate\_task\_memory | Amount (in MiB) of memory used in initial task definition. Default is minimum. | `number` | `512` | no |
-| hello\_world\_container\_ports | List of ports for the hello world container app to listen on. The app currently supports listening on two ports. | `list(number)` | <pre>[<br>  8080,<br>  8081<br>]</pre> | no |
 | kms\_key\_id | KMS customer managed key (CMK) ARN for encrypting application logs. | `string` | n/a | yes |
 | lb\_target\_groups | List of load balancer target group objects containing the lb\_target\_group\_arn, container\_port and container\_health\_check\_port. The container\_port is the port on which the container will receive traffic. The container\_health\_check\_port is an additional port on which the container can receive a health check. The lb\_target\_group\_arn is either Application Load Balancer (ALB) or Network Load Balancer (NLB) target group ARN tasks will register with. | <pre>list(<br>    object({<br>      container_port              = number<br>      container_health_check_port = number<br>      lb_target_group_arn         = string<br>      }<br>    )<br>  )</pre> | `[]` | no |
 | logs\_cloudwatch\_group | CloudWatch log group to create and use. Default: /ecs/{name}-{environment} | `string` | `""` | no |
 | logs\_cloudwatch\_retention | Number of days you want to retain log events in the log group. | `number` | `90` | no |
+| mountPoints | The mount points for data volumes in your container | `list(any)` | `[]` | no |
 | name | The service name. | `string` | n/a | yes |
 | nlb\_subnet\_cidr\_blocks | List of Network Load Balancer (NLB) CIDR blocks to allow traffic from. | `list(string)` | `[]` | no |
+| placement\_constraints | An array of placement constraint objects to use for the task | `list(string)` | `[]` | no |
+| portMappings | The list of port mappings for the container | `list(any)` | `[]` | no |
+| privileged | When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user) | `bool` | `false` | no |
+| tags | The metadata that you apply to the task definition to help you categorize and organize them | `map(string)` | `{}` | no |
 | target\_container\_name | Name of the container the Load Balancer should target. Default: {name}-{environment} | `string` | `""` | no |
 | tasks\_desired\_count | The number of instances of a task definition. | `number` | `1` | no |
 | tasks\_maximum\_percent | Upper limit on the number of running tasks. | `number` | `200` | no |
 | tasks\_minimum\_healthy\_percent | Lower limit on the number of running tasks. | `number` | `100` | no |
+| volumes | A list of volume definitions in JSON format that containers in your task may use | `list(any)` | `[]` | no |
 
 ## Outputs
 

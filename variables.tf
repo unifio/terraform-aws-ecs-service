@@ -7,7 +7,16 @@ variable "environment" {
   description = "Environment tag, e.g prod."
   type        = string
 }
-
+variable "cost_tags" {
+  description = "Additional tags for cost tracking"
+  type        = map(string)
+  default     = {}
+}
+variable "tags" {
+  default     = {}
+  description = "The metadata that you apply to the task definition to help you categorize and organize them"
+  type        = map(string)
+}
 variable "cloudwatch_alarm_name" {
   description = "Generic name used for CPU and Memory Cloudwatch Alarms"
   default     = ""
@@ -130,7 +139,6 @@ variable "tasks_maximum_percent" {
 
 variable "container_image" {
   description = "The image of the container."
-  default     = "golang:alpine"
   type        = string
 }
 
@@ -194,8 +202,30 @@ variable "lb_target_groups" {
   )
 }
 
-variable "hello_world_container_ports" {
-  description = "List of ports for the hello world container app to listen on. The app currently supports listening on two ports."
-  type        = list(number)
-  default     = [8080, 8081]
+variable "volumes" {
+  default     = []
+  description = "A list of volume definitions in JSON format that containers in your task may use"
+  type        = list(any)
+}
+
+variable "placement_constraints" {
+  default     = []
+  description = "An array of placement constraint objects to use for the task"
+  type        = list(string)
+}
+
+variable "portMappings" {
+  default     = []
+  description = "The list of port mappings for the container"
+  type        = list(any)
+}
+
+variable "mountPoints" {
+  default     = []
+  description = "The mount points for data volumes in your container"
+  type        = list(any)
+}
+variable "privileged" {
+  default     = false
+  description = "When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user)"
 }
