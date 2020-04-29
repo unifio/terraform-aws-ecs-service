@@ -65,5 +65,5 @@ output "awslogs_group_arn" {
 
 output "instance_role_policy" {
   description = "ARN of the Instance Role Policy"
-  value       = join("", aws_iam_role_policy.instance_role_policy.*.arn)
+  value       = join("", aws_iam_role_policy.instance_role_policy.*.id)
 }
