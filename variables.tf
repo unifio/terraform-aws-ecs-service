@@ -208,6 +208,10 @@ variable "volumes" {
   type        = list(any)
 }
 
+variable "family" {
+  type        = string
+  description = "The image family for the task definition"
+}
 variable "placement_constraints" {
   default     = []
   description = "An array of placement constraint objects to use for the task"

@@ -360,15 +360,19 @@ module "ecs_task_definition_main" {
   ipc_mode                 = var.ecs_use_fargate ? null : ""
   pid_mode                 = var.ecs_use_fargate ? null : ""
   cpu_container            = var.fargate_task_cpu
+  family                   = var.family
+  image                    = var.container_image
+  name                     = "${var.name}-${var.environment}"
   memory_container         = var.fargate_task_memory
   mountPoints              = var.mountPoints
   portMappings             = var.portMappings
   placement_constraints    = var.placement_constraints
   volumes                  = var.volumes
-  tags                     = local.merged_tags
+  tags                     = var.tags
   cost_tags                = var.cost_tags
   command                  = var.command
   network_mode             = "awsvpc"
+
   logConfiguration = {
     logDriver = "awslogs"
     options = {

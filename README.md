@@ -138,6 +138,7 @@ module "app_ecs_service" {
 | ecs\_use\_fargate | Whether to use Fargate for the task definition. | `bool` | `false` | no |
 | ecs\_vpc\_id | VPC ID to be used by ECS. | `string` | n/a | yes |
 | environment | Environment tag, e.g prod. | `string` | n/a | yes |
+| family | The image family for the task definition | `string` | n/a | yes |
 | fargate\_task\_cpu | Number of cpu units used in initial task definition. Default is minimum. | `number` | `256` | no |
 | fargate\_task\_memory | Amount (in MiB) of memory used in initial task definition. Default is minimum. | `number` | `512` | no |
 | kms\_key\_id | KMS customer managed key (CMK) ARN for encrypting application logs. | `string` | n/a | yes |
