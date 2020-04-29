@@ -35,12 +35,22 @@ output "task_execution_role" {
 
 output "task_definition_arn" {
   description = "Full ARN of the Task Definition (including both family and revision)."
-  value       = aws_ecs_task_definition.main.arn
+  value       = module.ecs_task_definition_main.arn
 }
 
 output "task_definition_family" {
   description = "The family of the Task Definition."
-  value       = aws_ecs_task_definition.main.family
+  value       = module.ecs_task_definition_main.family
+}
+
+output "task_definition_revision" {
+  description = "The revision of the task in a particular family"
+  value       = module.ecs_task_definition_main.revision
+}
+
+output "task_container_definitions" {
+  description = "A list of container definitions in JSON format that describe the different containers that make up your task"
+  value       = module.ecs_task_definition_main.container_definitions
 }
 
 output "awslogs_group" {
@@ -52,4 +62,3 @@ output "awslogs_group_arn" {
   description = "ARN of the CloudWatch Logs log group containers should use."
   value       = aws_cloudwatch_log_group.main.arn
 }
-
