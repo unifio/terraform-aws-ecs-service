@@ -99,7 +99,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_cpu_no_lb" {
   tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
-    "ServiceName" = aws_ecs_service.main_no_lb[count.index].name
+    "ServiceName" = aws_ecs_service.main[count.index].name
   }
 }
 
