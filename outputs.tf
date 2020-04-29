@@ -67,3 +67,12 @@ output "instance_role_policy" {
   description = "ARN of the Instance Role Policy"
   value       = join("", aws_iam_role_policy.instance_role_policy.*.id)
 }
+
+output "aws_ecs_service_name" {
+  description = "Name of the ECS service"
+  value       = aws_ecs_service.main.name
+}
+output "aws_ecs_cluster_name" {
+  description = "Name of the ECS cluster"
+  value       = aws_ecs_service.main.cluster
+}

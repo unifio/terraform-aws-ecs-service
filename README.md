@@ -189,6 +189,8 @@ module "app_ecs_service" {
 
 | Name | Description |
 |------|-------------|
+| aws\_ecs\_cluster\_name | Name of the ECS cluster |
+| aws\_ecs\_service\_name | Name of the ECS service |
 | awslogs\_group | Name of the CloudWatch Logs log group containers should use. |
 | awslogs\_group\_arn | ARN of the CloudWatch Logs log group containers should use. |
 | ecs\_security\_group\_id | Security Group ID assigned to the ECS tasks. |
