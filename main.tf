@@ -387,8 +387,8 @@ module "ecs_task_definition_main" {
 
 # Create a data source to pull the latest active revision from
 data "aws_ecs_task_definition" "main" {
-  task_definition = module.aws_ecs_task_definition.family
-  depends_on      = [module.aws_ecs_task_definition] # ensures at least one task def exists
+  task_definition = module.ecs_task_definition_main.family
+  depends_on      = [module.ecs_task_definition_main] # ensures at least one task def exists
 }
 
 locals {
