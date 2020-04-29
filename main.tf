@@ -427,8 +427,8 @@ resource "aws_ecs_service" "main" {
   launch_type = local.ecs_service_launch_type
   tags        = local.merged_tags
   # Use latest active revision
-  task_definition = "${module.aws_ecs_task_definition.family}:${max(
-    module.aws_ecs_task_definition.revision,
+  task_definition = "${module.ecs_task_definition_main.family}:${max(
+    module.ecs_task_definition_main.revision,
     data.aws_ecs_task_definition.main.revision,
   )}"
 
