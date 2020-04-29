@@ -366,3 +366,7 @@ variable "entryPoint" {
   description = "The entry point that is passed to the container"
   type        = list(string)
 }
+variable "workingDirectory" {
+  default     = ""
+  description = "The working directory in which to run commands inside the container"
+}

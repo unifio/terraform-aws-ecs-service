@@ -403,7 +403,7 @@ module "ecs_task_definition_main" {
       awslogs-stream-prefix = "${var.name}-ecs"
     }
   }
-  workingDirectory = "/"
+  workingDirectory = var.workingDirectory
 }
 
 # Create a data source to pull the latest active revision from

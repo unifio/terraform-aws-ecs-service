@@ -132,21 +132,34 @@ module "app_ecs_service" {
 | container\_definitions | Container definitions provided as valid JSON document. Default uses golang:alpine running a simple hello world. | `string` | `""` | no |
 | container\_image | The image of the container. | `string` | n/a | yes |
 | cost\_tags | Additional tags for cost tracking | `map(string)` | `{}` | no |
+| disableNetworking | When this parameter is true, networking is disabled within the container | `bool` | `false` | no |
+| dnsSearchDomains | A list of DNS search domains that are presented to the container | `list(string)` | `[]` | no |
+| dnsServers | A list of DNS servers that are presented to the container | `list(string)` | `[]` | no |
+| dockerLabels | A key/value map of labels to add to the container | `map(string)` | `{}` | no |
+| dockerSecurityOptions | A list of strings to provide custom labels for SELinux and AppArmor multi-level security systems | `list(string)` | `[]` | no |
 | ecr\_repo\_arns | The ARNs of the ECR repos.  By default, allows all repositories. | `list(string)` | <pre>[<br>  "*"<br>]</pre> | no |
 | ecs\_cluster | ECS cluster object for this task. | <pre>object({<br>    arn  = string<br>    name = string<br>  })</pre> | n/a | yes |
 | ecs\_instance\_role | The name of the ECS instance role. | `string` | `""` | no |
 | ecs\_subnet\_ids | Subnet IDs for the ECS tasks. | `list(string)` | n/a | yes |
 | ecs\_use\_fargate | Whether to use Fargate for the task definition. | `bool` | `false` | no |
 | ecs\_vpc\_id | VPC ID to be used by ECS. | `string` | n/a | yes |
+| entryPoint | The entry point that is passed to the container | `list(string)` | `[]` | no |
 | environment | Environment tag, e.g prod. | `string` | n/a | yes |
+| extraHosts | A list of hostnames and IP address mappings to append to the /etc/hosts file on the container | `list(string)` | `[]` | no |
 | family | The image family for the task definition | `string` | n/a | yes |
 | fargate\_task\_cpu | Number of cpu units used in initial task definition. Default is minimum. | `number` | `256` | no |
 | fargate\_task\_memory | Amount (in MiB) of memory used in initial task definition. Default is minimum. | `number` | `512` | no |
+| healthCheck | The health check command and associated configuration parameters for the container | `any` | `{}` | no |
+| hostname | The hostname to use for your container | `string` | `""` | no |
+| interactive | When this parameter is true, this allows you to deploy containerized applications that require stdin or a tty to be allocated | `bool` | `false` | no |
 | ipc\_mode | The IPC resource namespace to use for the containers in the task | `string` | n/a | yes |
 | kms\_key\_id | KMS customer managed key (CMK) ARN for encrypting application logs. | `string` | n/a | yes |
 | lb\_target\_groups | List of load balancer target group objects containing the lb\_target\_group\_arn, container\_port and container\_health\_check\_port. The container\_port is the port on which the container will receive traffic. The container\_health\_check\_port is an additional port on which the container can receive a health check. The lb\_target\_group\_arn is either Application Load Balancer (ALB) or Network Load Balancer (NLB) target group ARN tasks will register with. | <pre>list(<br>    object({<br>      container_port              = number<br>      container_health_check_port = number<br>      lb_target_group_arn         = string<br>      }<br>    )<br>  )</pre> | `[]` | no |
+| links | The link parameter allows containers to communicate with each other without the need for port mappings | `list(string)` | `[]` | no |
+| linuxParameters | Linux-specific modifications that are applied to the container, such as Linux KernelCapabilities | `any` | `{}` | no |
 | logs\_cloudwatch\_group | CloudWatch log group to create and use. Default: /ecs/{name}-{environment} | `string` | `""` | no |
 | logs\_cloudwatch\_retention | Number of days you want to retain log events in the log group. | `number` | `90` | no |
+| memoryReservation | The soft limit (in MiB) of memory to reserve for the container | `number` | `0` | no |
 | mountPoints | The mount points for data volumes in your container | `list(any)` | `[]` | no |
 | name | The service name. | `string` | n/a | yes |
 | nlb\_subnet\_cidr\_blocks | List of Network Load Balancer (NLB) CIDR blocks to allow traffic from. | `list(string)` | `[]` | no |
@@ -154,12 +167,23 @@ module "app_ecs_service" {
 | placement\_constraints | An array of placement constraint objects to use for the task | `list(string)` | `[]` | no |
 | portMappings | The list of port mappings for the container | `list(any)` | `[]` | no |
 | privileged | When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user) | `bool` | `false` | no |
+| pseudoTerminal | When this parameter is true, a TTY is allocated | `bool` | `false` | no |
+| readonlyRootFilesystem | When this parameter is true, the container is given read-only access to its root file system | `bool` | `false` | no |
+| register\_task\_definition | Registers a new task definition from the supplied family and containerDefinitions | `bool` | `true` | no |
+| repositoryCredentials | The private repository authentication credentials to use | `map(string)` | `{}` | no |
+| resourceRequirements | The type and amount of a resource to assign to a container | `list(string)` | `[]` | no |
+| secrets | The secrets to pass to the container | `list(string)` | `[]` | no |
+| systemControls | A list of namespaced kernel parameters to set in the container | `list(string)` | `[]` | no |
 | tags | The metadata that you apply to the task definition to help you categorize and organize them | `map(string)` | `{}` | no |
 | target\_container\_name | Name of the container the Load Balancer should target. Default: {name}-{environment} | `string` | `""` | no |
 | tasks\_desired\_count | The number of instances of a task definition. | `number` | `1` | no |
 | tasks\_maximum\_percent | Upper limit on the number of running tasks. | `number` | `200` | no |
 | tasks\_minimum\_healthy\_percent | Lower limit on the number of running tasks. | `number` | `100` | no |
+| ulimits | A list of ulimits to set in the container | `list(any)` | `[]` | no |
+| user | The user name to use inside the container | `string` | `""` | no |
 | volumes | A list of volume definitions in JSON format that containers in your task may use | `list(any)` | `[]` | no |
+| volumesFrom | Data volumes to mount from another container | `list(string)` | `[]` | no |
+| workingDirectory | The working directory in which to run commands inside the container | `string` | `""` | no |
 
 ## Outputs
 
