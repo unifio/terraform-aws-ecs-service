@@ -353,7 +353,7 @@ data "aws_region" "current" {
 module "ecs_task_definition_main" {
   source                   = "github.com/unifio/terraform-aws-ecs-task-definition"
   requires_compatibilities = compact([var.ecs_use_fargate ? "FARGATE" : ""])
-  cpu                      = var.ecs_use_fargate ? var.fargate_task_cpu : ""
+  cpu                      = var.ecs_use_fargate ? var.fargate_task_cpu : 0
   memory                   = var.ecs_use_fargate ? var.fargate_task_memory : ""
   execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
   task_role_arn            = aws_iam_role.task_role.arn
