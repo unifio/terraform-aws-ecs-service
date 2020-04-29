@@ -238,3 +238,11 @@ variable "command" {
   description = "The command that is passed to the container"
   type        = list(string)
 }
+variable "ipc_mode" {
+  type        = string
+  description = "The IPC resource namespace to use for the containers in the task"
+}
+variable "pid_mode" {
+  type        = string
+  description = "The process namespace to use for the containers in the task"
+}

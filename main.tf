@@ -357,8 +357,8 @@ module "ecs_task_definition_main" {
   memory                   = var.ecs_use_fargate ? var.fargate_task_memory : ""
   execution_role_arn       = join("", aws_iam_role.task_execution_role.*.arn)
   task_role_arn            = aws_iam_role.task_role.arn
-  ipc_mode                 = var.ecs_use_fargate ? null : "none"
-  pid_mode                 = var.ecs_use_fargate ? null : "task"
+  ipc_mode                 = var.ecs_use_fargate ? null : var.ipc_mode
+  pid_mode                 = var.ecs_use_fargate ? null : var.pid_mode
   cpu_container            = var.fargate_task_cpu
   family                   = var.family
   image                    = var.container_image

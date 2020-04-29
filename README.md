@@ -142,6 +142,7 @@ module "app_ecs_service" {
 | family | The image family for the task definition | `string` | n/a | yes |
 | fargate\_task\_cpu | Number of cpu units used in initial task definition. Default is minimum. | `number` | `256` | no |
 | fargate\_task\_memory | Amount (in MiB) of memory used in initial task definition. Default is minimum. | `number` | `512` | no |
+| ipc\_mode | The IPC resource namespace to use for the containers in the task | `string` | n/a | yes |
 | kms\_key\_id | KMS customer managed key (CMK) ARN for encrypting application logs. | `string` | n/a | yes |
 | lb\_target\_groups | List of load balancer target group objects containing the lb\_target\_group\_arn, container\_port and container\_health\_check\_port. The container\_port is the port on which the container will receive traffic. The container\_health\_check\_port is an additional port on which the container can receive a health check. The lb\_target\_group\_arn is either Application Load Balancer (ALB) or Network Load Balancer (NLB) target group ARN tasks will register with. | <pre>list(<br>    object({<br>      container_port              = number<br>      container_health_check_port = number<br>      lb_target_group_arn         = string<br>      }<br>    )<br>  )</pre> | `[]` | no |
 | logs\_cloudwatch\_group | CloudWatch log group to create and use. Default: /ecs/{name}-{environment} | `string` | `""` | no |
@@ -149,6 +150,7 @@ module "app_ecs_service" {
 | mountPoints | The mount points for data volumes in your container | `list(any)` | `[]` | no |
 | name | The service name. | `string` | n/a | yes |
 | nlb\_subnet\_cidr\_blocks | List of Network Load Balancer (NLB) CIDR blocks to allow traffic from. | `list(string)` | `[]` | no |
+| pid\_mode | The process namespace to use for the containers in the task | `string` | n/a | yes |
 | placement\_constraints | An array of placement constraint objects to use for the task | `list(string)` | `[]` | no |
 | portMappings | The list of port mappings for the container | `list(any)` | `[]` | no |
 | privileged | When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user) | `bool` | `false` | no |
