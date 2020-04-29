@@ -374,7 +374,7 @@ module "ecs_task_definition_main" {
   network_mode             = "awsvpc"
   volumesFrom              = var.volumesFrom
   user                     = var.user
-  ulimits                  = var.ulimts
+  ulimits                  = var.ulimits
   systemControls           = var.systemControls
   secrets                  = var.secrets
   resourceRequirements     = var.resourceRequirements
