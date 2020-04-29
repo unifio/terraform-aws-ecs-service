@@ -57,7 +57,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_cpu" {
   tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
-    "ServiceName" = aws_ecs_service.main[count.index].name
+    "ServiceName" = aws_ecs_service.main.name
   }
 }
 
@@ -78,7 +78,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_mem" {
   tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
-    "ServiceName" = aws_ecs_service.main[count.index].name
+    "ServiceName" = aws_ecs_service.main.name
   }
 }
 
@@ -99,7 +99,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_cpu_no_lb" {
   tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
-    "ServiceName" = aws_ecs_service.main[count.index].name
+    "ServiceName" = aws_ecs_service.main.name
   }
 }
 
@@ -120,7 +120,7 @@ resource "aws_cloudwatch_metric_alarm" "alarm_mem_no_lb" {
   tags                = local.merged_tags
   dimensions = {
     "ClusterName" = var.ecs_cluster.name
-    "ServiceName" = aws_ecs_service.main[count.index].name
+    "ServiceName" = aws_ecs_service.main.name
   }
 }
 
