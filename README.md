@@ -168,6 +168,7 @@ module "app_ecs_service" {
 | awslogs\_group | Name of the CloudWatch Logs log group containers should use. |
 | awslogs\_group\_arn | ARN of the CloudWatch Logs log group containers should use. |
 | ecs\_security\_group\_id | Security Group ID assigned to the ECS tasks. |
+| instance\_role\_policy | ARN of the Instance Role Policy |
 | task\_container\_definitions | A list of container definitions in JSON format that describe the different containers that make up your task |
 | task\_definition\_arn | Full ARN of the Task Definition (including both family and revision). |
 | task\_definition\_family | The family of the Task Definition. |

@@ -62,3 +62,8 @@ output "awslogs_group_arn" {
   description = "ARN of the CloudWatch Logs log group containers should use."
   value       = aws_cloudwatch_log_group.main.arn
 }
+
+output "instance_role_policy" {
+  description = "ARN of the Instance Role Policy"
+  value       = join("", aws_iam_role_policy.instance_role_policy.*.arn)
+}
