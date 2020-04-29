@@ -372,7 +372,29 @@ module "ecs_task_definition_main" {
   cost_tags                = var.cost_tags
   command                  = var.command
   network_mode             = "awsvpc"
-
+  volumesFrom              = var.volumesFrom
+  user                     = var.user
+  ulimits                  = var.ulimts
+  systemControls           = var.systemControls
+  secrets                  = var.secrets
+  resourceRequirements     = var.resourceRequirements
+  repositoryCredentials    = var.repositoryCredentials
+  register_task_definition = var.register_task_definition
+  readonlyRootFilesystem   = var.readonlyRootFilesystem
+  pseudoTerminal           = var.pseudoTerminal
+  memoryReservation        = var.memoryReservation
+  linuxParameters          = var.linuxParameters
+  links                    = var.links
+  interactive              = var.interactive
+  hostname                 = var.hostname
+  healthCheck              = var.healthCheck
+  extraHosts               = var.extraHosts
+  entryPoint               = var.entryPoint
+  dockerSecurityOptions    = var.dockerSecurityOptions
+  dockerLabels             = var.dockerLabels
+  dnsServers               = var.dnsServers
+  dnsSearchDomains         = var.dnsSearchDomains
+  disableNetworking        = var.disableNetworking
   logConfiguration = {
     logDriver = "awslogs"
     options = {
@@ -382,7 +404,6 @@ module "ecs_task_definition_main" {
     }
   }
   workingDirectory = "/"
-  dockerLabels     = var.cost_tags
 }
 
 # Create a data source to pull the latest active revision from

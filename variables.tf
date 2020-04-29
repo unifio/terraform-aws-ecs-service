@@ -246,3 +246,123 @@ variable "pid_mode" {
   type        = string
   description = "The process namespace to use for the containers in the task"
 }
+variable "volumesFrom" {
+  default     = []
+  description = "Data volumes to mount from another container"
+  type        = list(string)
+}
+variable "user" {
+  default     = ""
+  description = "The user name to use inside the container"
+}
+variable "ulimits" {
+  default     = []
+  description = "A list of ulimits to set in the container"
+  type        = list(any)
+}
+variable "resourceRequirements" {
+  default     = []
+  description = "The type and amount of a resource to assign to a container"
+  type        = list(string)
+}
+
+variable "secrets" {
+  default     = []
+  description = "The secrets to pass to the container"
+  type        = list(string)
+}
+
+variable "systemControls" {
+  default     = []
+  description = "A list of namespaced kernel parameters to set in the container"
+  type        = list(string)
+}
+
+variable "pseudoTerminal" {
+  default     = false
+  description = "When this parameter is true, a TTY is allocated"
+}
+
+variable "readonlyRootFilesystem" {
+  default     = false
+  description = "When this parameter is true, the container is given read-only access to its root file system"
+}
+
+variable "register_task_definition" {
+  default     = true
+  description = "Registers a new task definition from the supplied family and containerDefinitions"
+}
+
+variable "repositoryCredentials" {
+  default     = {}
+  description = "The private repository authentication credentials to use"
+  type        = map(string)
+}
+variable "memoryReservation" {
+  default     = 0
+  description = "The soft limit (in MiB) of memory to reserve for the container"
+}
+variable "links" {
+  default     = []
+  description = "The link parameter allows containers to communicate with each other without the need for port mappings"
+  type        = list(string)
+}
+
+variable "linuxParameters" {
+  default     = {}
+  description = "Linux-specific modifications that are applied to the container, such as Linux KernelCapabilities"
+  type        = any
+}
+variable "interactive" {
+  default     = false
+  description = "When this parameter is true, this allows you to deploy containerized applications that require stdin or a tty to be allocated"
+}
+variable "healthCheck" {
+  default     = {}
+  description = "The health check command and associated configuration parameters for the container"
+  type        = any
+}
+
+variable "hostname" {
+  default     = ""
+  description = "The hostname to use for your container"
+}
+variable "extraHosts" {
+  default     = []
+  description = "A list of hostnames and IP address mappings to append to the /etc/hosts file on the container"
+  type        = list(string)
+}
+variable "disableNetworking" {
+  default     = false
+  description = "When this parameter is true, networking is disabled within the container"
+}
+
+variable "dnsSearchDomains" {
+  default     = []
+  description = "A list of DNS search domains that are presented to the container"
+  type        = list(string)
+}
+
+variable "dnsServers" {
+  default     = []
+  description = "A list of DNS servers that are presented to the container"
+  type        = list(string)
+}
+
+variable "dockerLabels" {
+  default     = {}
+  description = "A key/value map of labels to add to the container"
+  type        = map(string)
+}
+
+variable "dockerSecurityOptions" {
+  default     = []
+  description = "A list of strings to provide custom labels for SELinux and AppArmor multi-level security systems"
+  type        = list(string)
+}
+
+variable "entryPoint" {
+  default     = []
+  description = "The entry point that is passed to the container"
+  type        = list(string)
+}
