@@ -128,6 +128,7 @@ module "app_ecs_service" {
 | cloudwatch\_alarm\_mem\_enable | Enable the Memory Utilization CloudWatch metric alarm | `bool` | `true` | no |
 | cloudwatch\_alarm\_mem\_threshold | The Memory Utilization threshold for the CloudWatch metric alarm | `number` | `80` | no |
 | cloudwatch\_alarm\_name | Generic name used for CPU and Memory Cloudwatch Alarms | `string` | `""` | no |
+| command | The command that is passed to the container | `list(string)` | `[]` | no |
 | container\_definitions | Container definitions provided as valid JSON document. Default uses golang:alpine running a simple hello world. | `string` | `""` | no |
 | container\_image | The image of the container. | `string` | n/a | yes |
 | cost\_tags | Additional tags for cost tracking | `map(string)` | `{}` | no |

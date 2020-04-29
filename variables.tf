@@ -233,3 +233,8 @@ variable "privileged" {
   default     = false
   description = "When this parameter is true, the container is given elevated privileges on the host container instance (similar to the root user)"
 }
+variable "command" {
+  default     = []
+  description = "The command that is passed to the container"
+  type        = list(string)
+}
